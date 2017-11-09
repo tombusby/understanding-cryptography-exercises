@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import collections, re, operator
+import collections, re
 
 def get_ciphertext_letters_by_frequency(ciphertext):
     ciphertext_nopunc = re.sub(r"\W+", "", ciphertext)
@@ -59,6 +59,7 @@ with open("ex1.1-ciphertext.txt") as f:
     print_deciphered_plaintext("Naive", key, decipher(ciphertext, key))
     key = get_manually_tweaked_key()
     print_deciphered_plaintext("Manually Tweaked", key, decipher(ciphertext, key))
+    print "Q1.1.3 Answer: This was said by Shoshin Nagamine", "\n"
 
 
 """

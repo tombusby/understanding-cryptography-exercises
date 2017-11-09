@@ -38,3 +38,10 @@ if __name__ == "__main__":
     brute_force(ciphertext)
     statistical_attack(ciphertext)
     print "Q1.2.2 Answer: This was said by Tecumseh\n"
+
+"""
+Recovered Plaintext:
+
+IFWEALLUNITEWEWILLCAUSETHERIVERSTOSTAINTHEGREATWATERSWITHTHEIRBLOOD.
+
+"""

@@ -50,7 +50,7 @@ if __name__ == "__main__":
     print_ciphertext(ciphertext)
     plaintext = affine_decrypt(7, 22, ciphertext)
     print_plaintext(7, 22, plaintext)
-    print "Q1.11.2 Answer: This was said by the Queen\n"
+    print "Q1.11.2 Answer: This was said by the Lewis Carrol in his poem\n"
 
 """
 Deciphered Plaintext:

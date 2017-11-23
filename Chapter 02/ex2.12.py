@@ -9,7 +9,7 @@ class LFSR(object):
         self.feedforward = feedforward
 
     def initialise_registers(self, init_vector):
-        self.registers = [int(a) for a in list(bin(init_vector).lstrip("-0b").zfill(len(self.registers)))]
+        self.registers = [0] * (len(self.registers) - len(init_vector)) + init_vector
 
     def get_output_bit(self):
         return (self.registers[-1] + self._get_feedforward_output() + self._get_and_output()) % 2
@@ -17,6 +17,10 @@ class LFSR(object):
     def iterate(self, input_bit):
         self.registers.pop()
         self.registers.insert(0, (input_bit + self._get_feedback_output()) % 2)
+
+    def show_internal_state(self):
+        print self.registers
+        print "Output bit:", self.get_output_bit(), "\nFeedBack bit:", self._get_feedback_output(), "\n"
 
     def _get_and_output(self):
         return self.registers[-3] * self.registers[-2]
@@ -29,22 +33,21 @@ class LFSR(object):
 
 class Trivium(object):
 
-    def _fix_offset_for_init_vector(self, init_vector):
-        # TODO: Fix this so that it initialises the leftmost 70 bits as per spec
-        return init_vector
-
     def __init__(self, init_vector, key):
         self.a = LFSR(93, 68, 65)
         self.b = LFSR(84, 77, 68)
         self.c = LFSR(111, 86, 65)
-        self.a.initialise_registers(init_vector)
-        self.b.initialise_registers(key)
-        self.c.initialise_registers(7)
+        self.a.initialise_registers(init_vector + [0] * 13)
+        self.b.initialise_registers(key + [0] * 4)
+        self.c.initialise_registers([1, 1, 1])
 
     def show_internal_state(self):
-        print "A:\n", self.a.registers, "\nOutput bit:", self.a.get_output_bit(), "\n"
-        print "B:\n", self.b.registers, "\nOutput bit:", self.b.get_output_bit(), "\n"
-        print "C:\n", self.c.registers, "\nOutput bit:", self.c.get_output_bit(), "\n"
+        print "A:"
+        self.a.show_internal_state()
+        print "B:"
+        self.b.show_internal_state()
+        print "C:"
+        self.c.show_internal_state()
 
     def get_output_bit(self):
         return (self.a.get_output_bit() + self.b.get_output_bit() + self.c.get_output_bit()) % 2
@@ -58,9 +61,10 @@ class Trivium(object):
         self.c.iterate(b_output)
 
 if __name__ == "__main__":
-    keystream_generator = Trivium(0, 0)
-    while True:
-        keystream_generator.show_internal_state()
-        print keystream_generator.get_output_bit()
+    keystream_generator = Trivium([], [])
+    bits = []
+    for i in range(0,70):
+        bits.append(keystream_generator.get_output_bit())
         keystream_generator.iterate()
-        time.sleep(0.1)
+    print bits
+    print len(bits)

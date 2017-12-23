@@ -1,13 +1,19 @@
 #!/usr/bin/env python
 from bitarray import bitarray
 
-def generate_round_keys(key):
+def generate_round_keys(key, verbose=False):
     yield key[:64]
     for i in range(1, 32):
         key = key[-19:] + key[:-19]
+        if verbose:
+            print "KeyState After Rotation:\t", bit_array_to_hex(key)
         key = sbox(key[:4]) + key[4:]
+        if verbose:
+            print "KeyState After S-box:\t\t", bit_array_to_hex(key)
         round_counter = make_bit_array(5, i)
         key = key[:-20] + (key[-20:-15] ^ round_counter) + key[-15:]
+        if verbose:
+            print "KeyState After Counter Add:\t", bit_array_to_hex(key)
         yield key[:64]
 
 def sbox(n):
@@ -65,20 +71,20 @@ def present_80_encrypt(plaintext, key, verbose=False):
     ciphertext = make_bit_array(64, plaintext)
     key = make_bit_array(80, key)
     i = 0
-    for ki in generate_round_keys(key):
+    for ki in generate_round_keys(key, verbose):
         i += 1
         ciphertext ^= ki
         if verbose:
-            print "Round {i:02d} Key:\t\t".format(i=i), bit_array_to_hex(ki)
-            print "State After KeyAdd:\t", bit_array_to_hex(ciphertext)
+            print "Round {i:02d} Key:\t\t\t".format(i=i), bit_array_to_hex(ki)
+            print "State After KeyAdd:\t\t", bit_array_to_hex(ciphertext)
         if i == 32:
             break
         ciphertext = apply_sbox(ciphertext)
         if verbose:
-            print "State After SBox:\t", bit_array_to_hex(ciphertext)
+            print "State After SBox:\t\t", bit_array_to_hex(ciphertext)
         ciphertext = apply_pLayer(ciphertext)
         if verbose:
-            print "State After pLayer:\t", bit_array_to_hex(ciphertext)
+            print "State After pLayer:\t\t", bit_array_to_hex(ciphertext)
         if verbose:
             print "--------"
 

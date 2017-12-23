@@ -97,7 +97,4 @@ def bit_array_to_hex(b):
 if __name__ == "__main__":
     plaintext = int('0000000000000000', 16)
     key = int('BBBB55555555EEEEFFFF', 16)
-    
     present_80_encrypt(plaintext, key, verbose=True)
-
-

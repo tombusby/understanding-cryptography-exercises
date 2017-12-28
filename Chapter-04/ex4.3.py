@@ -43,6 +43,12 @@ class Polynomial:
     def __rmul__(self, polynomial):
         return self.__mul__(polynomial)
 
+    # def __mod__(self, polynomial):
+    #    pass
+
+    # def __rmod__(self, polynomial):
+    #     return self.__mod__(polynomial)
+
     def get_order(self):
         i = 0
         order = 0
@@ -52,7 +58,7 @@ class Polynomial:
         return order
 
 if __name__ == "__main__":
-    # smallest power on the left, largest on the right
+    # smallest power (x^0) on the left, largest on the right
     a = Polynomial([1, 1, 1])
     b = Polynomial([0, 1])
     print a * b

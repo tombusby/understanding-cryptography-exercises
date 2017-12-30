@@ -1,8 +1,11 @@
 #!/usr/bin/env python
+from pprint import pprint
 
 class Mod2Polynomial:
 
     def __init__(self, vector):
+        while len(vector) and not vector[-1]:
+            vector.pop()
         self.vector = [0] * len(vector)
         i = 0
         for p in vector:
@@ -18,8 +21,8 @@ class Mod2Polynomial:
             else:
                 return "1"
         indexed_coefficients = zip(self.vector, range(0, len(self.vector)))
-        polynomial_string = [monomial_str(o) if c else "" for c, o in indexed_coefficients]
-        return " + ".join(reversed(filter(bool, polynomial_string))) if polynomial_string else "0"
+        polynomial_string = filter(bool, [monomial_str(o) if c else "" for c, o in indexed_coefficients])
+        return " + ".join(reversed(polynomial_string)) if polynomial_string else "0"
 
     def __add__(self, polynomial):
         size = max(self.get_order(), polynomial.get_order()) + 1
@@ -27,15 +30,10 @@ class Mod2Polynomial:
         b = polynomial.vector + [0] * (size - len(polynomial.vector))
         return Mod2Polynomial([(ac + bc) % 2 for ac, bc in zip(a, b)])
 
-    def __radd__(self, polynomial):
-        return self.__add__(polynomial)
-
     def __mul__(self, polynomial):
-        a_order = self.get_order()
-        b_order = polynomial.get_order()
-        if not a_order or not b_order:
+        if self.is_zero() or b.is_zero():
             return Mod2Polynomial([])
-        vector = [0] * (a_order + b_order + 2)
+        vector = [0] * (self.get_order() + polynomial.get_order() + 2)
         i1 = 0
         for p1 in self.vector:
             i2 = 0
@@ -44,9 +42,6 @@ class Mod2Polynomial:
                 i2 += 1
             i1 += 1
         return Mod2Polynomial(vector)
-
-    def __rmul__(self, polynomial):
-        return self.__mul__(polynomial)
 
     def __mod__(self, divisor):
         def make_monomial(n):
@@ -58,14 +53,11 @@ class Mod2Polynomial:
         divisor_order = divisor.get_order()
         if not divisor_order:
             raise ZeroDivisionError
-        while divisor_order < dividend.get_order():
+        while divisor_order <= dividend.get_order():
             monomial = make_monomial(dividend.get_order() - divisor_order)
             quotient += monomial
             dividend += (monomial * divisor)
         return dividend
-
-    def __rmod__(self, polynomial):
-        return self.__mod__(polynomial)
 
     def get_order(self):
         i = 0
@@ -75,9 +67,18 @@ class Mod2Polynomial:
             i += 1
         return order
 
+    def is_zero(self):
+        return not any(self.vector)
+
+
 if __name__ == "__main__":
     # smallest power (x^0) on the left, largest on the right
-    a = Mod2Polynomial([1, 0, 1])
-    b = Mod2Polynomial([1, 0, 1])
     mod = Mod2Polynomial([1, 1, 0, 1])
-    print (a * b) % mod
+    def all_poss_vectors():
+        # ordering reversal counters the lowest-power-first input to Mod2Polynomial and
+        # ensures that the ordering of the for loop below is not nonsensical
+        return [[c,b,a] for a in [0,1] for b in [0,1] for c in [0,1]]
+    for (a, b) in [(a, b) for a in all_poss_vectors() for b in all_poss_vectors()]:
+        a = Mod2Polynomial(a)
+        b = Mod2Polynomial(b)
+        print str(a), "*", str(b), "\n=", str((a * b) % mod), "\n"

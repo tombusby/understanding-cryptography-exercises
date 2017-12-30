@@ -11,13 +11,15 @@ class Mod2Polynomial:
 
     def __str__(self):
         def monomial_str(order):
-            if order > 0:
+            if order == 1:
+                return "x"
+            elif order > 0:
                 return "x^{}".format(order)
             else:
                 return "1"
         indexed_coefficients = zip(self.vector, range(0, len(self.vector)))
         polynomial_string = [monomial_str(o) if c else "" for c, o in indexed_coefficients]
-        return " + ".join(reversed(filter(bool, polynomial_string)))
+        return " + ".join(reversed(filter(bool, polynomial_string))) if polynomial_string else "0"
 
     def __add__(self, polynomial):
         size = max(self.get_order(), polynomial.get_order()) + 1
@@ -29,7 +31,11 @@ class Mod2Polynomial:
         return self.__add__(polynomial)
 
     def __mul__(self, polynomial):
-        vector = [0] * (self.get_order() + polynomial.get_order() + 2)
+        a_order = self.get_order()
+        b_order = polynomial.get_order()
+        if not a_order or not b_order:
+            return Mod2Polynomial([])
+        vector = [0] * (a_order + b_order + 2)
         i1 = 0
         for p1 in self.vector:
             i2 = 0
@@ -50,6 +56,8 @@ class Mod2Polynomial:
         dividend = Mod2Polynomial(self.vector[:])
         quotient = Mod2Polynomial([0] * (max(self.get_order(), divisor.get_order()) + 1))
         divisor_order = divisor.get_order()
+        if not divisor_order:
+            raise ZeroDivisionError
         while divisor_order < dividend.get_order():
             monomial = make_monomial(dividend.get_order() - divisor_order)
             quotient += monomial
@@ -69,7 +77,7 @@ class Mod2Polynomial:
 
 if __name__ == "__main__":
     # smallest power (x^0) on the left, largest on the right
-    a = Mod2Polynomial([0, 0, 1])
+    a = Mod2Polynomial([1, 0, 1])
     b = Mod2Polynomial([1, 0, 1])
     mod = Mod2Polynomial([1, 1, 0, 1])
     print (a * b) % mod

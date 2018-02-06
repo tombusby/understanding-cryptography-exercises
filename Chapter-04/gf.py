@@ -65,5 +65,10 @@ class Mod2Polynomial:
             i += 1
         return order
 
+    def get_binary_representation(self, pad = 8):
+        v = self.vector[:]
+        v.reverse()
+        return "".join([str(i) for i in v]).zfill(pad)
+
     def is_zero(self):
         return not any(self.vector)

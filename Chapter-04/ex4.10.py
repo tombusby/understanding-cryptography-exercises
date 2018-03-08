@@ -28,7 +28,7 @@ def ByteSubstitution(state):
         0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16,
     ]
     # I had originally split it into two coordinates, but this is completely unnecessary for reasons that
-    # become clear once you give a few seconds though to it.
+    # become clear once you give a few seconds thought to it.
     return [[sbox[i] for i in row] for row in state]
 
 def ShiftRows(state):
@@ -89,6 +89,7 @@ def encryption_round(state, k1):
     return state
 
 if __name__ == "__main__":
+    # Credit to Lisa Roy for pointing out this matrix is filled column-wise.
     k1 = [
         [0xA0, 0x88, 0x23, 0x2A],
         [0xFA, 0x54, 0xA3, 0x6C],
@@ -96,7 +97,8 @@ if __name__ == "__main__":
         [0x17, 0xB1, 0x39, 0x05],
     ]
     state1 = [
-        [0x2A, 0x28, 0xAB, 0x09],
+        [0x2A, 0x28, 0xAB, 0x09], # Q1
+        # [0x2B, 0x28, 0xAB, 0x09], # Q2
         [0x7E, 0xAE, 0xF7, 0xCF],
         [0x15, 0xD2, 0x15, 0x4F],
         [0x16, 0xA6, 0x88, 0x3C],
